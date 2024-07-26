@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>frag-predict: A Fragment-Based Drug Design Tool</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include the updated CSS -->
+    <style>
+        body {
+            padding-top: 20px;
+        }
+        .section-spacing {
+            margin-bottom: 30px;
+        }
+        .pink-title {
+            color: #ff69b4; /* Pink color */
+        }
+        .btn-pink {
+            background-color: #ff69b4; /* Pink color */
+            border-color: #ff69b4;
+        }
+        .btn-pink:hover {
+            background-color: #ff1493; /* Darker pink for hover */
+            border-color: #ff1493;
+        }
+        #viewer, #viewer-fragmented {
+            width: 100%;
+            height: 400px; /* Adjust height as needed */
+            position: relative; /* Ensure positioning context */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #viewer canvas, #viewer-fragmented canvas {
+            width: 80%; /* Set canvas width to a fraction of the viewer */
+            height: 80%; /* Set canvas height to a fraction of the viewer */
+        }
+        .subtitle {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ff69b4; /* Pink color */
+            display: none; /* Hide initially */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center section-spacing">
+            <div class="col-md-8 text-center">
+                <h1>
+                    <span class="pink-title">frag-predict</span>: A Fragment-Based Drug Design Tool
+                </h1>
+                <h5 class="text-muted">
+                    This application utilizes a trained machine learning model to analyze the provided SMILES string,
+                    decompose it into potential drug fragments, and evaluate these fragments by docking them onto 
+                    the selected protein structure. The results, including fragment scores, facilitate the FBDD process.
+                </h5>
+            </div>
+        </div>
+
+        <div class="row justify-content-center section-spacing">
+            <div class="col-md-8">
+                <form id="inputForm">
+                    <div class="form-group">
+                        <label for="smilesInput">SMILES String</label>
+                        <input type="text" class="form-control" id="smilesInput" placeholder="Enter SMILES string" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="proteinSelector">Select Protein</label>
+                        <select class="form-control" id="proteinSelector" required>
+                            <option value="">Select a protein</option>
+                            <option value="CGRP receptor">CGRP receptor</option>
+                            <option value="wt KRAS">wt KRAS</option>
+                            <option value="mTOR">mTOR</option>
+                            <option value="PI3K alpha">PI3K alpha</option>
+                            <option value="KRAS G12C">KRAS G12C</option>
+                            <option value="yCP">yCP</option>
+                            <option value="Raf Kinase">Raf Kinase</option>
+                            <option value="AKT1">AKT1</option>
+                            <option value="BRAF">BRAF</option>
+                            <option value="ERK2">ERK2</option>
+                            <option value="MEK">MEK</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-pink btn-block">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row justify-content-center section-spacing">
+            <div class="col-md-8">
+                <div class="subtitle" id="subtitle-inputted">Inputted Compound</div>
+                <div id="viewer"></div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center section-spacing">
+            <div class="col-md-8">
+                <div class="subtitle" id="subtitle-fragmented">Fragmented Compound</div>
+                <div id="viewer-fragmented"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- 3Dmol.js -->
+    <script src="https://3dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="app.js"></script>
+</body>
+</html>
