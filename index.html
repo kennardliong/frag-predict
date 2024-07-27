@@ -44,6 +44,13 @@
             color: #ff69b4; /* Pink color */
             display: none; /* Hide initially */
         }
+        .img-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .btn-toggle {
+            display: none; /* Hide initially */
+        }
     </style>
 </head>
 <body>
@@ -51,12 +58,13 @@
         <div class="row justify-content-center section-spacing">
             <div class="col-md-8 text-center">
                 <h1>
-                    <span class="pink-title">frag-predict</span>: A Fragment-Based Drug Design Tool
+                    <span class="pink-title">frag-predict</span>: A Web App for Fragment-Based Drug Design
                 </h1>
                 <h5 class="text-muted">
-                    This application utilizes a trained machine learning model to analyze the provided SMILES string,
-                    decompose it into potential drug fragments, and evaluate these fragments by docking them onto 
-                    the selected protein structure. The results, including fragment scores, facilitate the FBDD process.
+                    frag-predict utilizes a trained machine learning model to analyze the provided SMILES string and
+                    decompose it into the best-calculated drug fragment to target the given protein. 
+                    The result is a potential lead compound, with its properties given and 
+                    geometry-optimized PDB file available to download.
                 </h5>
             </div>
         </div>
@@ -93,6 +101,10 @@
         <div class="row justify-content-center section-spacing">
             <div class="col-md-8">
                 <h3 class="subtitle" id="subtitle-inputted">Inputted Compound Structure</h3>
+                <button class="btn btn-pink btn-toggle" id="toggle-input-view">Show 2D View</button>
+                <div class="img-container">
+                    <img id="input-2d" style="display: none; max-width: 100%;" />
+                </div>
                 <div id="viewer"></div>
                 <a id="input-download" class="btn btn-pink" style="display: none;" download>Download Input PDB</a>
             </div>
@@ -101,6 +113,10 @@
         <div class="row justify-content-center section-spacing">
             <div class="col-md-8">
                 <h3 class="subtitle" id="subtitle-fragmented">Fragmented Compound Structure</h3>
+                <button class="btn btn-pink btn-toggle" id="toggle-fragment-view">Show 2D View</button>
+                <div class="img-container">
+                    <img id="fragment-2d" style="display: none; max-width: 100%;" />
+                </div>
                 <div id="viewer-fragmented"></div>
                 <a id="fragment-download" class="btn btn-pink" style="display: none;" download>Download Fragment PDB</a>
             </div>
