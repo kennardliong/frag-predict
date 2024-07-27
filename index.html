@@ -12,7 +12,7 @@
             padding-top: 20px;
         }
         .section-spacing {
-            margin-bottom: 30px;
+            margin-bottom: 50px;
         }
         .pink-title {
             color: #ff69b4; /* Pink color */
@@ -92,21 +92,23 @@
 
         <div class="row justify-content-center section-spacing">
             <div class="col-md-8">
-                <div class="subtitle" id="subtitle-inputted">Input Compound</div>
+                <h3 class="subtitle" id="subtitle-inputted">Inputted Compound Structure</h3>
                 <div id="viewer"></div>
+                <a id="input-download" class="btn btn-pink" style="display: none;" download>Download Input PDB</a>
             </div>
         </div>
-        
+
         <div class="row justify-content-center section-spacing">
             <div class="col-md-8">
-                <div class="subtitle" id="subtitle-fragmented">Best Fragment</div>
+                <h3 class="subtitle" id="subtitle-fragmented">Fragmented Compound Structure</h3>
                 <div id="viewer-fragmented"></div>
+                <a id="fragment-download" class="btn btn-pink" style="display: none;" download>Download Fragment PDB</a>
             </div>
         </div>
-        
+
         <div class="row justify-content-center section-spacing">
-            <div class="col-md-8">
-                <h5 id="fragment-output" class="text-center text-muted"></h5>
+            <div class="col-md-8 text-center">
+                <div id="fragment-properties"></div>
             </div>
         </div>
     </div>
