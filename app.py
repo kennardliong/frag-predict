@@ -93,7 +93,7 @@ def download_pdb():
     with open(file_path, 'w') as file:
         file.write(pdb_block)
 
-    return send_file(file_path, as_attachment=True)
+    return send_file(file_path, as_attachment=True, mimetype='chemical/x-pdb', download_name=filename)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
