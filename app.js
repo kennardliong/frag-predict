@@ -11,9 +11,30 @@ document.getElementById('inputForm').addEventListener('submit', function(event) 
     console.log("SMILES String:", smiles);
     console.log("Selected Protein:", protein);
 
+    // Show sections and buttons
     document.getElementById('subtitle-inputted').style.display = 'block';
     document.getElementById('subtitle-fragmented').style.display = 'block';
+    document.getElementById('toggle-input-view').style.display = 'block';
+    document.getElementById('toggle-fragment-view').style.display = 'block';
 
+    // Fetch 2D image for input
+    fetch('http://localhost:5000/get_2d_structure', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ smiles: smiles })
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        document.getElementById('input-2d').src = url;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+
+    // Fetch 3D structure for input
     fetch('http://localhost:5000/get_3d_structure', {
         method: 'POST',
         headers: {
@@ -23,16 +44,11 @@ document.getElementById('inputForm').addEventListener('submit', function(event) 
     })
     .then(response => response.json())
     .then(data => {
-        if (data.error) {
-            alert(data.error);
-            return;
-        }
-
         const viewer = $3Dmol.createViewer("viewer", {
             defaultcolors: $3Dmol.rasmolElementColors,
             backgroundColor: 'black'
         });
-        
+
         viewer.addModel(data.pdb, "pdb");
         viewer.setStyle({}, {stick: {colorscheme: 'Jmol'}});
         viewer.zoomTo();
@@ -51,19 +67,12 @@ document.getElementById('inputForm').addEventListener('submit', function(event) 
             .then(response => {
                 if (response.ok) {
                     return response.blob();
-                } else {
-                    alert('Failed to download PDB file');
                 }
+                throw new Error('Network response was not ok.');
             })
             .then(blob => {
                 const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = 'input_structure.pdb';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
+                inputDownloadLink.href = url;
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -74,6 +83,7 @@ document.getElementById('inputForm').addEventListener('submit', function(event) 
         console.error('Error:', error);
     });
 
+    // Predict fragment
     fetch('http://localhost:5000/predict_fragment', {
         method: 'POST',
         headers: {
@@ -88,27 +98,30 @@ document.getElementById('inputForm').addEventListener('submit', function(event) 
             return;
         }
 
-        const fragmentSmiles = data.fragment_smiles;
-        const fragmentPdb = data.pdb;
-        const properties = data.properties;
+        // Display 2D image for fragmented molecule
+        fetch('http://localhost:5000/get_2d_structure', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ smiles: data.fragment_smiles })
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            document.getElementById('fragment-2d').src = url;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 
-        console.log("Best Fragment SMILES:", fragmentSmiles);
-        document.getElementById('fragment-properties').innerHTML = `
-            <p></p>
-            <p><span class="pink-title">Best Fragment SMILES: </span> ${fragmentSmiles}</p>   
-            <p><span class="pink-title">Molecular Weight: </span>${properties.molecular_weight.toFixed(2)}</p>
-            <p><span class="pink-title">LogP: </span>${properties.log_p.toFixed(2)}</p>
-            <p><span class="pink-title">Hydrogen Bond Donors: </span>${properties.hydrogen_bond_donors}</p>
-            <p><span class="pink-title">Hydrogen Bond Acceptors: </span>${properties.hydrogen_bond_acceptors}</p>
-            <p><span class="pink-title">TPSA: </span> ${properties.tpsa.toFixed(2)}</p>
-        `;
-
+        // Display 3D structure for fragmented molecule
         const viewerFragmented = $3Dmol.createViewer("viewer-fragmented", {
             defaultcolors: $3Dmol.rasmolElementColors,
             backgroundColor: 'black'
         });
 
-        viewerFragmented.addModel(fragmentPdb, "pdb");
+        viewerFragmented.addModel(data.pdb, "pdb");
         viewerFragmented.setStyle({}, {stick: {colorscheme: 'Jmol'}});
         viewerFragmented.zoomTo();
         viewerFragmented.render();
@@ -121,31 +134,70 @@ document.getElementById('inputForm').addEventListener('submit', function(event) 
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ smiles: fragmentSmiles, filename: 'fragment_structure.pdb' })
+                body: JSON.stringify({ smiles: data.fragment_smiles, filename: 'fragment_structure.pdb' })
             })
             .then(response => {
                 if (response.ok) {
                     return response.blob();
-                } else {
-                    alert('Failed to download PDB file');
                 }
+                throw new Error('Network response was not ok.');
             })
             .then(blob => {
                 const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = 'fragment_structure.pdb';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
+                fragmentDownloadLink.href = url;
             })
             .catch(error => {
                 console.error('Error:', error);
             });
         };
+
+        // Display fragment properties in a formatted manner
+        const propertiesDiv = document.getElementById('fragment-properties');
+        propertiesDiv.innerHTML = `
+            <h4 class="pink-title">Fragment Properties:</h4>
+            <p></p>
+            <p><strong>SMILES:</strong> ${data.fragment_smiles}</p>
+            <p><strong>Molecular Weight:</strong> ${data.properties.molecular_weight} Da</p>
+            <p><strong>LogP Value:</strong> ${data.properties.log_p}</p>
+            <p><strong>Hydrogen Bond Acceptors:</strong> ${data.properties.hydrogen_bond_acceptors}</p>
+            <p><strong>Hydrogen Bond Donors:</strong> ${data.properties.hydrogen_bond_donors}</p>
+            <p><strong>Topological Polar Surface Area:</strong> ${data.properties.tpsa} Å²</p>
+        `;
     })
     .catch(error => {
         console.error('Error:', error);
     });
+});
+
+// Toggle functionality
+document.getElementById('toggle-input-view').addEventListener('click', function() {
+    const viewer = document.getElementById('viewer');
+    const img2d = document.getElementById('input-2d');
+    const is2d = img2d.style.display === 'block';
+
+    if (is2d) {
+        img2d.style.display = 'none';
+        viewer.style.display = 'block';
+        this.textContent = 'Show 2D View';
+    } else {
+        img2d.style.display = 'block';
+        viewer.style.display = 'none';
+        this.textContent = 'Show 3D View';
+    }
+});
+
+document.getElementById('toggle-fragment-view').addEventListener('click', function() {
+    const viewer = document.getElementById('viewer-fragmented');
+    const img2d = document.getElementById('fragment-2d');
+    const is2d = img2d.style.display === 'block';
+
+    if (is2d) {
+        img2d.style.display = 'none';
+        viewer.style.display = 'block';
+        this.textContent = 'Show 2D View';
+    } else {
+        img2d.style.display = 'block';
+        viewer.style.display = 'none';
+        this.textContent = 'Show 3D View';
+    }
 });
