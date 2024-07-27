@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from rdkit import Chem
-from rdkit.Chem import AllChem
+from rdkit.Chem import AllChem, Draw
 from frag_predict import generate_best_fragment, cleanup_molecule_rdkit, calculate_properties, get_3d_structure, best_model, feature_columns
 import os
 
@@ -26,6 +26,24 @@ def get_3d_structure_route():
     pdb_block = Chem.MolToPDBBlock(mol)
 
     return jsonify({"pdb": pdb_block})
+
+@app.route('/get_2d_structure', methods=['POST'])
+def get_2d_structure_route():
+    data = request.json
+    smiles = data.get('smiles')
+
+    if not smiles:
+        return jsonify({"error": "SMILES string is required"}), 400
+
+    mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        return jsonify({"error": "Invalid SMILES string"}), 400
+
+    img = Draw.MolToImage(mol)
+    img_path = os.path.join(os.getcwd(), 'molecule.png')
+    img.save(img_path)
+
+    return send_file(img_path, mimetype='image/png')
 
 @app.route('/predict_fragment', methods=['POST'])
 def predict_fragment():
