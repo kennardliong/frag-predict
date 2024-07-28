@@ -154,7 +154,7 @@ document.getElementById('inputForm').addEventListener('submit', function(event) 
         // Display fragment properties in a formatted manner
         const propertiesDiv = document.getElementById('fragment-properties');
         propertiesDiv.innerHTML = `
-            <h4 class="pink-title">Fragment Properties:</h4>
+            <h5 class="pink-title">Properties:</h5>
             <p></p>
             <p><strong>SMILES:</strong> ${data.fragment_smiles}</p>
             <p><strong>Molecular Weight:</strong> ${data.properties.molecular_weight} Da</p>
@@ -200,4 +200,27 @@ document.getElementById('toggle-fragment-view').addEventListener('click', functi
         viewer.style.display = 'none';
         this.textContent = 'Show 3D View';
     }
+});
+
+function createSparkle(x, y) {
+    const sparkle = document.createElement('div');
+    sparkle.classList.add('sparkle');
+    sparkle.style.left = `${x}px`;
+    sparkle.style.top = `${y}px`;
+    document.body.appendChild(sparkle);
+
+    setTimeout(() => {
+        sparkle.remove();
+    }, 500); // Duration of the sparkle animation
+}
+
+// Add event listeners to all pink buttons
+document.querySelectorAll('.btn-pink').forEach(button => {
+    button.addEventListener('click', function(event) {
+        // Calculate the sparkle coordinates relative to the entire document
+        const x = event.pageX;
+        const y = event.pageY;
+        // Create the sparkle at the calculated coordinates
+        createSparkle(x, y);
+    });
 });
