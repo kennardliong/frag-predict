@@ -21,6 +21,28 @@
             background-color: #ff69b4; /* Pink color */
             border-color: #ff69b4;
         }
+        .sparkle {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, white 0%, rgba(255, 255, 255, 0) 70%);
+            pointer-events: none;
+            animation: sparkle 0.5s ease-in-out forwards;
+        }
+        @keyframes sparkle {
+            0% {
+                opacity: 1;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+        }
         .btn-pink:hover {
             background-color: #ff1493; /* Darker pink for hover */
             border-color: #ff1493;
@@ -38,8 +60,7 @@
             height: 80%; /* Set canvas height to a fraction of the viewer */
         }
         .subtitle {
-            text-align: center;
-            font-weight: bold;
+            text-align: left;
             margin-bottom: 10px;
             color: #ff69b4; /* Pink color */
             display: none; /* Hide initially */
@@ -51,16 +72,24 @@
         .btn-toggle {
             display: none; /* Hide initially */
         }
+        .title-container {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle-text {
+            text-align: left; /* Align subtitle text to the left */
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="row justify-content-center section-spacing">
-            <div class="col-md-8 text-center">
+        <div class="row justify-content-center section-spacing title-container">
+            <div class="col-md-12 text-center">
                 <h1>
                     <span class="pink-title">frag-predict</span>: A Web App for Fragment-Based Drug Design
                 </h1>
-                <h5 class="text-muted">
+                <h5 class="text-muted subtitle-text">
                     frag-predict utilizes a trained machine learning model to analyze the provided SMILES string and
                     decompose it into the best-calculated drug fragment to target the given protein. 
                     The result is a potential lead compound, with its properties given and 
@@ -70,7 +99,7 @@
         </div>
 
         <div class="row justify-content-center section-spacing">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <form id="inputForm">
                     <div class="form-group">
                         <label for="smilesInput">SMILES String</label>
@@ -98,9 +127,9 @@
             </div>
         </div>
 
-        <div class="row justify-content-center section-spacing">
-            <div class="col-md-8">
-                <h3 class="subtitle" id="subtitle-inputted">Inputted Compound Structure</h3>
+        <div class="row justify-content-start section-spacing">
+            <div class="col-md-12">
+                <h3 class="subtitle text-start" id="subtitle-inputted">Inputted Compound Structure</h3>
                 <button class="btn btn-pink btn-toggle" id="toggle-input-view">Show 2D View</button>
                 <div class="img-container">
                     <img id="input-2d" style="display: none; max-width: 100%;" />
@@ -110,9 +139,10 @@
             </div>
         </div>
 
-        <div class="row justify-content-center section-spacing">
-            <div class="col-md-8">
-                <h3 class="subtitle" id="subtitle-fragmented">Fragmented Compound Structure</h3>
+        <div class="row justify-content-start section-spacing">
+            <div class="col-md-12">
+                <h3 class="subtitle text-start" id="subtitle-fragmented">Fragmented Compound Structure</h3>
+                <div id="fragment-properties"></div>
                 <button class="btn btn-pink btn-toggle" id="toggle-fragment-view">Show 2D View</button>
                 <div class="img-container">
                     <img id="fragment-2d" style="display: none; max-width: 100%;" />
@@ -122,11 +152,11 @@
             </div>
         </div>
 
-        <div class="row justify-content-center section-spacing">
-            <div class="col-md-8 text-center">
+        <!-- <div class="row justify-content-center section-spacing">
+            <div class="col-md-12 text-center">
                 <div id="fragment-properties"></div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <!-- Bootstrap JS and dependencies -->
