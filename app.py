@@ -3,6 +3,7 @@ from flask_cors import CORS
 from rdkit import Chem
 from rdkit.Chem import AllChem, Draw
 from frag_predict import generate_best_fragment, cleanup_molecule_rdkit, calculate_properties, get_3d_structure, best_model, feature_columns
+from combine_frag import combine_fragments
 import os
 
 app = Flask(__name__)
@@ -94,6 +95,19 @@ def download_pdb():
         file.write(pdb_block)
 
     return send_file(file_path, as_attachment=True, mimetype='chemical/x-pdb', download_name=filename)
+
+@app.route('/combine', methods=['POST'])
+def combine():
+    frag1_smiles = str(request.json.get('smiles1'))
+    frag2_smiles = str(request.json.get('smiles2'))
+    print(f'Received SMILES 1: {frag1_smiles}')
+    print(f'Received SMILES 2: {frag2_smiles}')
+    try:
+        combined_smiles_list = combine_fragments(frag1_smiles, frag2_smiles)
+        print(combined_smiles_list)
+        return jsonify({'success': True, 'combined_smiles': combined_smiles_list})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
