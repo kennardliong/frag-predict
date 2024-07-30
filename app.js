@@ -122,34 +122,40 @@ document.getElementById('inputForm').addEventListener('submit', function(event) 
             const combinedContainer = document.getElementById('combined-container');
             combinedContainer.innerHTML = ''; // Clear previous results
             console.log(data.combined_smiles)
-            data.combined_smiles.forEach((fragment, index) => {
-                const combinedDiv = document.createElement('div');
-                combinedDiv.id = `combined-${index}`;
-                combinedDiv.innerHTML = `
-                    <h3>Combined Fragment ${index + 1}</h3>
-                    <button id="toggle-combined-view-${index}">Show 3D View</button>
-                    <img id="combined-2d-${index}" style="display:none;" />
-                    <div id="viewer-combined-${index}" style="width: 400px; height: 400px; display:none;"></div>
-                    <a id="combined-download-${index}" style="display:none;">Download 3D Structure</a>
-                    <div id="combined-properties-${index}">
-                        <p><strong>SMILES:</strong> ${fragment.smiles}</p>
-                        <p><strong>Molecular Weight:</strong> ${fragment.properties.molecular_weight} Da</p>
-                        <p><strong>LogP Value:</strong> ${fragment.properties.log_p}</p>
-                        <p><strong>Hydrogen Bond Acceptors:</strong> ${fragment.properties.hydrogen_bond_acceptors}</p>
-                        <p><strong>Hydrogen Bond Donors:</strong> ${fragment.properties.hydrogen_bond_donors}</p>
-                        <p><strong>Topological Polar Surface Area:</strong> ${fragment.properties.tpsa} Å²</p>
-                    </div>
-                `;
+            if (data.combined_smiles=[]){
+                combinedContainer.innerHTML=`
+                <p>No possible combined fragments generated</p>
+                `
+            }else{
+                data.combined_smiles.forEach((fragment, index) => {
+                    const combinedDiv = document.createElement('div');
+                    combinedDiv.id = `combined-${index}`;
+                    combinedDiv.innerHTML = `
+                        <h3>Combined Fragment ${index + 1}</h3>
+                        <button id="toggle-combined-view-${index}">Show 3D View</button>
+                        <img id="combined-2d-${index}" style="display:none;" />
+                        <div id="viewer-combined-${index}" style="width: 400px; height: 400px; display:none;"></div>
+                        <a id="combined-download-${index}" style="display:none;">Download 3D Structure</a>
+                        <div id="combined-properties-${index}">
+                            <p><strong>SMILES:</strong> ${fragment.smiles}</p>
+                            <p><strong>Molecular Weight:</strong> ${fragment.properties.molecular_weight} Da</p>
+                            <p><strong>LogP Value:</strong> ${fragment.properties.log_p}</p>
+                            <p><strong>Hydrogen Bond Acceptors:</strong> ${fragment.properties.hydrogen_bond_acceptors}</p>
+                            <p><strong>Hydrogen Bond Donors:</strong> ${fragment.properties.hydrogen_bond_donors}</p>
+                            <p><strong>Topological Polar Surface Area:</strong> ${fragment.properties.tpsa} Å²</p>
+                        </div>
+                    `;
 
-                combinedContainer.appendChild(combinedDiv);
+                    combinedContainer.appendChild(combinedDiv);
 
-                fetch2DStructure(fragment.smiles, document.getElementById(`combined-2d-${index}`));
-                fetch3DStructure(fragment.smiles, document.getElementById(`viewer-combined-${index}`), document.getElementById(`combined-download-${index}`), `combined_structure_${index}.pdb`);
+                    fetch2DStructure(fragment.smiles, document.getElementById(`combined-2d-${index}`));
+                    fetch3DStructure(fragment.smiles, document.getElementById(`viewer-combined-${index}`), document.getElementById(`combined-download-${index}`), `combined_structure_${index}.pdb`);
 
-                document.getElementById(`toggle-combined-view-${index}`).addEventListener('click', function() {
-                    toggleCombinedView(index);
+                    document.getElementById(`toggle-combined-view-${index}`).addEventListener('click', function() {
+                        toggleCombinedView(index);
+                    });
                 });
-            });
+            }
         } catch (error) {
             console.error('Error combining fragments:', error);
         }
