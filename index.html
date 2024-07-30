@@ -47,7 +47,7 @@
             background-color: #ff1493; /* Darker pink for hover */
             border-color: #ff1493;
         }
-        #viewer, #viewer-fragmented {
+        #viewer, #viewer2, #viewer-fragmented, #viewer-fragmented2 {
             width: 100%;
             height: 400px; /* Adjust height as needed */
             position: relative; /* Ensure positioning context */
@@ -55,13 +55,13 @@
             align-items: center;
             justify-content: center;
         }
-        #viewer canvas, #viewer-fragmented canvas {
+        #viewer canvas, #viewer2 canvas, #viewer-fragmented canvas, #viewer-fragmented2 canvas {
             width: 80%; /* Set canvas width to a fraction of the viewer */
             height: 80%; /* Set canvas height to a fraction of the viewer */
         }
         .subtitle {
             text-align: left;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             color: #ff69b4; /* Pink color */
             display: none; /* Hide initially */
         }
@@ -74,11 +74,11 @@
         }
         .title-container {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
         .subtitle-text {
             text-align: left; /* Align subtitle text to the left */
-            margin-top: 10px;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -102,8 +102,12 @@
             <div class="col-md-12">
                 <form id="inputForm">
                     <div class="form-group">
-                        <label for="smilesInput">SMILES String</label>
-                        <input type="text" class="form-control" id="smilesInput" placeholder="Enter SMILES string" required>
+                        <label for="smilesInput1">SMILES String 1</label>
+                        <input type="text" class="form-control" id="smilesInput1" placeholder="Enter SMILES string" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="smilesInput2">SMILES String 2</label>
+                        <input type="text" class="form-control" id="smilesInput2" placeholder="Enter SMILES string" required>
                     </div>
                     <div class="form-group">
                         <label for="proteinSelector">Select Protein</label>
@@ -128,35 +132,59 @@
         </div>
 
         <div class="row justify-content-start section-spacing">
-            <div class="col-md-12">
-                <h3 class="subtitle text-start" id="subtitle-inputted">Inputted Compound Structure</h3>
-                <button class="btn btn-pink btn-toggle" id="toggle-input-view">Show 2D View</button>
+            <div class="col-md-6">
+                <h3 class="subtitle text-start" id="subtitle-inputted1">Inputted Compound Structure 1</h3>
+                <button class="btn btn-pink btn-toggle" id="toggle-input-view1">Show 2D View</button>
                 <div class="img-container">
-                    <img id="input-2d" style="display: none; max-width: 100%;" />
+                    <img id="input-2d1" style="display: none; max-width: 100%;" />
                 </div>
                 <div id="viewer"></div>
-                <a id="input-download" class="btn btn-pink" style="display: none;" download>Download Input PDB</a>
+                <a id="input-download1" class="btn btn-pink" style="display: none;" download>Download Input PDB</a>
+            </div>
+            <div class="col-md-6">
+                <h3 class="subtitle text-start" id="subtitle-inputted2">Inputted Compound Structure 2</h3>
+                <button class="btn btn-pink btn-toggle" id="toggle-input-view2">Show 2D View</button>
+                <div class="img-container">
+                    <img id="input-2d2" style="display: none; max-width: 100%;" />
+                </div>
+                <div id="viewer2"></div>
+                <a id="input-download2" class="btn btn-pink" style="display: none;" download>Download Input PDB</a>
+            </div>
+        </div>
+
+        <div class="row justify-content-start section-spacing">
+            <div class="col-md-6">
+                <h3 class="subtitle text-start" id="subtitle-fragmented1">Fragmented Compound Structure 1</h3>
+                <div id="fragment-properties1"></div>
+                <button class="btn btn-pink btn-toggle" id="toggle-fragment-view1">Show 2D View</button>
+                <div class="img-container">
+                    <img id="fragment-2d1" style="display: none; max-width: 100%;" />
+                </div>
+                <div id="viewer-fragmented"></div>
+                <a id="fragment-download1" class="btn btn-pink" style="display: none;" download>Download Fragment PDB</a>
+            </div>
+            <div class="col-md-6">
+                <h3 class="subtitle text-start" id="subtitle-fragmented2">Fragmented Compound Structure 2</h3>
+                <div id="fragment-properties2"></div>
+                <button class="btn btn-pink btn-toggle" id="toggle-fragment-view2">Show 2D View</button>
+                <div class="img-container">
+                    <img id="fragment-2d2" style="display: none; max-width: 100%;" />
+                </div>
+                <div id="viewer-fragmented2"></div>
+                <a id="fragment-download2" class="btn btn-pink" style="display: none;" download>Download Fragment PDB</a>
             </div>
         </div>
 
         <div class="row justify-content-start section-spacing">
             <div class="col-md-12">
-                <h3 class="subtitle text-start" id="subtitle-fragmented">Fragmented Compound Structure</h3>
-                <div id="fragment-properties"></div>
-                <button class="btn btn-pink btn-toggle" id="toggle-fragment-view">Show 2D View</button>
-                <div class="img-container">
-                    <img id="fragment-2d" style="display: none; max-width: 100%;" />
+                <h2 id="subtitle-combined" style="display:none;">Combined Fragments</h2>
+                <div id="combined-container">
+                    <!-- Combined fragments will be dynamically added here -->
                 </div>
-                <div id="viewer-fragmented"></div>
-                <a id="fragment-download" class="btn btn-pink" style="display: none;" download>Download Fragment PDB</a>
+            
             </div>
         </div>
 
-        <!-- <div class="row justify-content-center section-spacing">
-            <div class="col-md-12 text-center">
-                <div id="fragment-properties"></div>
-            </div>
-        </div> -->
     </div>
 
     <!-- Bootstrap JS and dependencies -->
