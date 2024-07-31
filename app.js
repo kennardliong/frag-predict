@@ -108,6 +108,23 @@ document.getElementById('inputForm').addEventListener('submit', function(event) 
         }
     }
 
+    async function fetchScore(smiles) {
+        try {
+            const response = await fetch('http://localhost:5000/score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ smiles })
+            });
+            const data = await response.json();
+            return data.score;
+        } catch (error) {
+            console.error('Error fetching score:', error);
+            return null;
+        }
+    }
+
     async function combineFragments(smiles1, smiles2) {
 
         try {
@@ -128,6 +145,7 @@ document.getElementById('inputForm').addEventListener('submit', function(event) 
                 `
             }else{
                 for (const [index, fragment] of data.combined_smiles.entries()) {
+                    const score = await fetchScore(fragment.smiles);
                     const combinedDiv = document.createElement('div');
                     combinedDiv.id = `combined-${index}`;
                     combinedDiv.innerHTML = `
@@ -139,6 +157,8 @@ document.getElementById('inputForm').addEventListener('submit', function(event) 
                             <p><strong>Hydrogen Bond Acceptors:</strong> ${fragment.properties.hydrogen_bond_acceptors}</p>
                             <p><strong>Hydrogen Bond Donors:</strong> ${fragment.properties.hydrogen_bond_donors}</p>
                             <p><strong>Topological Polar Surface Area:</strong> ${fragment.properties.tpsa} Å²</p>
+                            <p><strong>Docking Score:</strong> ${score}</p>
+
                         </div>
                         <button class="btn btn-pink btn-toggle" id="toggle-combined-view-${index}">Show 2D View</button>
                         <div class="img-container">
