@@ -4,12 +4,27 @@ from rdkit import Chem
 from rdkit.Chem import AllChem, Draw
 from frag_predict import generate_best_fragment, cleanup_molecule_rdkit, calculate_properties, get_3d_structure, best_model, feature_columns
 from combine_frag import combine_fragments
+from docking import run_docking
+
 import os
 import pandas as pd
 
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/score', methods=['POST'])
+def score_compound():
+    try:
+        data = request.get_json()
+        smiles = data.get('smiles')
+        
+        if not smiles:
+            return jsonify({'error': 'No SMILES string provided'}), 400
+        
+        score = run_docking(smiles)
+        return jsonify({'smiles': smiles, 'score': score})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/get_3d_structure', methods=['POST'])
 def get_3d_structure_route():
