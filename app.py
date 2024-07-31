@@ -5,9 +5,11 @@ from rdkit.Chem import AllChem, Draw
 from frag_predict import generate_best_fragment, cleanup_molecule_rdkit, calculate_properties, get_3d_structure, best_model, feature_columns
 from combine_frag import combine_fragments
 import os
+import pandas as pd
 
 app = Flask(__name__)
 CORS(app)
+
 
 @app.route('/get_3d_structure', methods=['POST'])
 def get_3d_structure_route():
@@ -105,7 +107,16 @@ def combine():
     try:
         combined_smiles_list = combine_fragments(frag1_smiles, frag2_smiles)
         print(combined_smiles_list)
-        return jsonify({'success': True, 'combined_smiles': combined_smiles_list})
+
+        combined_fragments_with_properties = []
+        for smiles in combined_smiles_list:
+            properties = calculate_properties(smiles)
+            combined_fragments_with_properties.append({
+                'smiles': smiles,
+                'properties': properties
+            })
+
+        return jsonify({'success': True, 'combined_smiles': combined_fragments_with_properties})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
