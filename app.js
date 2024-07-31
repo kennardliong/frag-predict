@@ -127,15 +127,11 @@ document.getElementById('inputForm').addEventListener('submit', function(event) 
                 <p>No possible combined fragments generated</p>
                 `
             }else{
-                data.combined_smiles.forEach((fragment, index) => {
+                for (const [index, fragment] of data.combined_smiles.entries()) {
                     const combinedDiv = document.createElement('div');
                     combinedDiv.id = `combined-${index}`;
                     combinedDiv.innerHTML = `
                         <h3>Combined Fragment ${index + 1}</h3>
-                        <button id="toggle-combined-view-${index}">Show 3D View</button>
-                        <img id="combined-2d-${index}" style="display:none;" />
-                        <div id="viewer-combined-${index}" style="width: 400px; height: 400px; display:none;"></div>
-                        <a id="combined-download-${index}" style="display:none;">Download 3D Structure</a>
                         <div id="combined-properties-${index}">
                             <p><strong>SMILES:</strong> ${fragment.smiles}</p>
                             <p><strong>Molecular Weight:</strong> ${fragment.properties.molecular_weight} Da</p>
@@ -144,17 +140,23 @@ document.getElementById('inputForm').addEventListener('submit', function(event) 
                             <p><strong>Hydrogen Bond Donors:</strong> ${fragment.properties.hydrogen_bond_donors}</p>
                             <p><strong>Topological Polar Surface Area:</strong> ${fragment.properties.tpsa} Å²</p>
                         </div>
+                        <button class="btn btn-pink btn-toggle" id="toggle-combined-view-${index}">Show 2D View</button>
+                        <div class="img-container">
+                            <img id="combined-2d-${index}" style="display: none;"/>
+                        </div>
+                        <div id="viewer-combined-${index}"></div>
+                        <a id="combined-download-${index}" class="btn btn-pink" style="display:none;">Download Combined Molecule PDB</a>
                     `;
 
                     combinedContainer.appendChild(combinedDiv);
 
-                    fetch2DStructure(fragment.smiles, document.getElementById(`combined-2d-${index}`));
-                    fetch3DStructure(fragment.smiles, document.getElementById(`viewer-combined-${index}`), document.getElementById(`combined-download-${index}`), `combined_structure_${index}.pdb`);
+                    await fetch2DStructure(fragment.smiles, document.getElementById(`combined-2d-${index}`));
+                    await fetch3DStructure(fragment.smiles, document.getElementById(`viewer-combined-${index}`), document.getElementById(`combined-download-${index}`), `combined_structure_${index}.pdb`);
 
                     document.getElementById(`toggle-combined-view-${index}`).addEventListener('click', function() {
                         toggleCombinedView(index);
                     });
-                });
+                };
             }
         } catch (error) {
             console.error('Error combining fragments:', error);
@@ -223,10 +225,10 @@ function toggleFragmentView(suffix) {
     }
 }
 
-function toggleCombinedView() {
-    const combined2D = document.getElementById('combined-2d');
-    const viewerCombined = document.getElementById('viewer-combined');
-    const button = document.getElementById('toggle-combined-view');
+function toggleCombinedView(index) {
+    const combined2D = document.getElementById(`combined-2d${index}`);
+    const viewerCombined = document.getElementById(`viewer-combined${index}`);
+    const button = document.getElementById(`toggle-combined-view${index}`);
 
     if (combined2D.style.display === 'none') {
         combined2D.style.display = 'block';
